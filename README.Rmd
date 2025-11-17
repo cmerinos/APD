@@ -27,14 +27,77 @@ devtools::install_github("cmerinos/APD")
 ## Example
 
 ```{r example, eval = FALSE}
+
+###### Example 1 ######
 library(APD)
 
-# toy data: 10 persons x 5 items
+## toy data: 10 persons x 5 items
 set.seed(123)
 dat.example1 <- matrix(sample(1:5, 50, replace = TRUE), ncol = 5)
 
-# compute APD
+## compute APD
 APD(dat.example1, ncat = 5, ci = TRUE, level = 0.95, B = 500)
+
+###### Example 2 ######
+library(psych)
+
+## Loading data
+data("bfi")
+
+## Choosing variables
+data.bfi <- bfi[, c("N1", "N2", "N3", "N4", "N5", "gender", "age")]
+
+## Clean for missing values
+data.bfi <- data.bfi[complete.cases(data.bfi), ]
+
+
+## APD for total sample
+APD(data = data.bfi[, 1:5],
+      ncat = 5, 
+      ci = T, 
+      B = 500, 
+      cimethod = "perc",
+      conf.level = .95)
+
+## Inter-item average (IIA) correlation for total sample
+iiacor(data = data.bfi[, 1:5])
+
+## APD and IIA for sex groups
+
+data.bfi$gender <- as.factor(data.bfi$gender)
+
+APDmg(data = data.bfi[, 1:5],
+      ncat = 5, 
+      ci = T, 
+      B = 500, 
+      cimethod = "perc",
+      group = data.bfi$gender, 
+      conf.level = .95)
+
+iiacor(data = data.bfi[, 1:5], group = data.bfi$gender)
+
+
+## APD and IAA for customized age groups
+
+DescTools::Freq(data.bfi$age)
+
+table(cut(data.bfi$age, breaks = c(0, 20, 30, 40, 50, 90)))
+
+data.bfi$age4lev <- cut(data.bfi$age, breaks = c(0, 20, 30, 40, 50, 90))
+
+APDmg(data = data.bfi[, 1:5],
+      ncat = 5, 
+      ci = T, 
+      B = 500, 
+      cimethod = "perc",
+      group = data.bfi$age4lev, 
+      conf.level = .95)
+
+
+iiacor(data = data.bfi[, 1:5], 
+       group = data.bfi$age4lev, 
+       nboot = 500)
+
 ```
 
 ## Package Structure
@@ -53,7 +116,7 @@ Briggs, S.R. and Cheek, J.M. (1986).\
 The role of factor analysis in the development and evaluation of personality scales.\
 *Journal of Personality*, 54, 106–148. <https://doi.org/10.1111/j.1467-6494.1986.tb00391.x>
 
-Clark, L. A., & Watson, D. (1995). \
+Clark, L. A., & Watson, D. (1995).\
 Constructing validity: Basic issues in objective scale development.\
 *Psychological Assessment*, 7}(3), 309–319. <https://doi.org/10.1037/1040-3590.7.3.309>
 
