@@ -40,8 +40,9 @@
 #'   \item \strong{0.20 ≤ APD ≤ 0.25}: often acceptable depending on the construct.
 #'   \item \strong{APD > 0.25}: may signal weaker internal consistency or heterogeneous item content.
 #' }
-#' These values are not strict cutoffs and should be interpreted alongside other
-#' reliability evidence (e.g., alpha, omega) and substantive test characteristics.
+#' These values are recommended for Sturman et al. (2009), and they are not strict cutoffs and should
+#' be interpreted alongside other reliability evidence (e.g., alpha, omega) and substantive test
+#' characteristics.
 #'
 #' @references
 #' Sturman, D., Cribbie, R. A., & Flett, G. L. (2009).
@@ -94,40 +95,40 @@ APD <- function(data, ncat, ci, conf.level, B, cimethod) {
 
   # Generar todas las combinaciones de columnas (pares de items)
   column_combinations <- combn(ncol(data), 2)
-  
+
   # Inicializar una lista para almacenar las diferencias absolutas entre pares de columnas
   diff_abs_list <- list()
-  
+
   # Calcular las diferencias absolutas para cada par de columnas usando operaciones vectorizadas
   for (i in 1:ncol(column_combinations)) {
     # Obtener los índices de las columnas a comparar
     col1 <- column_combinations[1, i]
     col2 <- column_combinations[2, i]
-    
+
     # Calcular la diferencia absoluta entre los valores de las dos columnas de forma vectorizada
     diff_abs_list[[i]] <- abs(data[[col1]] - data[[col2]])
   }
-  
+
   # Unir todas las diferencias absolutas en un solo vector
   all_diff_abs <- unlist(diff_abs_list)
-  
+
   # Calcular el promedio de las diferencias absolutas
   AD <- mean(all_diff_abs, na.rm = TRUE)
-  
+
   # Calcular el APD total (Average Proportional Distance)
   APD <- round(AD / (ncat - 1), 3)
-  
+
   # Inicializar valores para el límite inferior (LCI) y el límite superior (UCI) del intervalo de confianza
   LCI <- NA
   UCI <- NA
-  
+
   # Si se desea calcular el intervalo de confianza
   if (ci) {
     # Función para calcular APD con una muestra bootstrap
     boot_apd <- function(data, ncat) {
       # Tomar una muestra bootstrap aleatoria con reemplazo
       sample_data <- data[sample(1:nrow(data), replace = TRUE), ]
-      
+
       # Recalcular AD y APD para la muestra bootstrap
       column_combinations <- combn(ncol(sample_data), 2)
       diff_abs_list <- list()
@@ -141,12 +142,12 @@ APD <- function(data, ncat, ci, conf.level, B, cimethod) {
       APD_boot <- AD_boot / (ncat - 1)
       return(APD_boot)
     }
-    
+
     # Generar las muestras bootstrap y calcular APD para cada una en paralelo
     library(boot)
     boot_samples <- lapply(1:B, function(x) boot_apd(data, ncat))
     boot_samples <- unlist(boot_samples)
-    
+
     # Calcular el intervalo de confianza de acuerdo al método seleccionado
     if (cimethod == "bca") {
       # Método de corrección de sesgo y aceleración (BCa)
@@ -168,7 +169,7 @@ APD <- function(data, ncat, ci, conf.level, B, cimethod) {
       UCI <- round(mean_boot + z * se, 3)  # Límite superior del IC
     }
   }
-  
+
   # Crear el dataframe de resultados
   if (ci) {
     # Si se calculó el intervalo de confianza, incluir LCI y UCI en los resultados
@@ -183,7 +184,7 @@ APD <- function(data, ncat, ci, conf.level, B, cimethod) {
       Value = c(round(AD, 3), APD)
     )
   }
-  
+
   # Retornar el dataframe de resultados
   return(resultados)
 }
