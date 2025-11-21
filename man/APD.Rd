@@ -71,8 +71,9 @@ The following informal guidelines may help interpretation:
   \item \strong{0.20 ≤ APD ≤ 0.25}: often acceptable depending on the construct.
   \item \strong{APD > 0.25}: may signal weaker internal consistency or heterogeneous item content.
 }
-These values are not strict cutoffs and should be interpreted alongside other
-reliability evidence (e.g., alpha, omega) and substantive test characteristics.
+These values are recommended for Sturman et al. (2009), and they are not strict cutoffs and should
+be interpreted alongside other reliability evidence (e.g., alpha, omega) and substantive test
+characteristics.
 }
 
 \examples{
