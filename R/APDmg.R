@@ -88,15 +88,21 @@
 #' }
 #'
 #' @references
-#' Zou, G. Y., & Donner, A. (2008). Construction of confidence limits
-#' about effect measures: A general approach.
-#' \emph{Statistics in Medicine, 27}, 1693–1702.
-#' \doi{10.1002/sim.3095}
 #'
 #' Newcombe, R. G. (1998). Interval estimation for the difference between
 #' independent proportions: comparison of eleven methods.
 #' \emph{Statistics in Medicine, 17}, 873–890.
 #' \doi{10.1002/(SICI)1097-0258(19980430)17:8<873::AID-SIM779>3.0.CO;2-I}
+#'
+#' Sturman, D., Cribbie, R. A., & Flett, G. L. (2009).
+#' The average distance between item values: A novel approach for estimating
+#' internal consistency. \emph{Educational and Psychological Measurement},
+#' 69(6), 913–932.
+#'
+#' Zou, G. Y., & Donner, A. (2008). Construction of confidence limits
+#' about effect measures: A general approach.
+#' \emph{Statistics in Medicine, 27}, 1693–1702.
+#' \doi{10.1002/sim.3095}
 #'
 #' @examples
 #' set.seed(123)
@@ -116,7 +122,7 @@
 #'              ci = TRUE, conf.level = 0.95, B = 200,
 #'              cimethod = "bca")
 #'
-#' res$group_results
+#' res$APD.group
 #' res$comparisons
 #'
 #' @export
@@ -216,8 +222,8 @@ APDmg <- function(data, ncat, group, ci = TRUE, conf.level = 0.95, B = 1000, cim
         group1 = group1,
         group2 = group2,
         Difference = round(difference, 3),
-        Lower_CI = round(lower_diff, 3),
-        Upper_CI = round(upper_diff, 3)
+        lwr.ci = round(lower_diff, 3),
+        upr.ci = round(upper_diff, 3)
       )
     })
     comparisons <- do.call(rbind, comparisons)
@@ -226,14 +232,14 @@ APDmg <- function(data, ncat, group, ci = TRUE, conf.level = 0.95, B = 1000, cim
       group1 = character(0),
       group2 = character(0),
       Difference = numeric(0),
-      Lower_CI = numeric(0),
-      Upper_CI = numeric(0)
+      lwr.ci = numeric(0),
+      upr.ci = numeric(0)
     )
   }
 
   # Retornar resultados
   return(list(
-    group_results = group_results,
-    comparisons = comparisons
+    APD.group = group_results,
+    Comparisons = comparisons
   ))
 }
