@@ -217,9 +217,10 @@
 #' @export
 aiicor <- function(data,
                    rmethod    = "pearson",
+                   ci         = TRUE,
                    conf.level = 0.95,
                    nboot      = 1000,
-                   bmethod    = "bca",
+                   ci.method  = "bca",
                    nd         = 3,
                    group      = NULL) {
 
@@ -227,26 +228,41 @@ aiicor <- function(data,
   if (!is.data.frame(data)) data <- as.data.frame(data)
 
   # Argument checks
-  if (!rmethod %in% c("pearson", "spearman"))
-    stop("Argument 'rmethod' must be 'pearson' or 'spearman'.")
+  if (!rmethod %in% c("pearson", "spearman", "poly")) {
+    stop("Argument 'rmethod' must be 'pearson', 'spearman', or 'poly'.")
+  }
 
-  if (!is.numeric(conf.level) || conf.level <= 0 || conf.level >= 1)
+  if (!is.logical(ci) || length(ci) != 1) {
+    stop("Argument 'ci' must be TRUE or FALSE.")
+  }
+
+  if (!is.numeric(conf.level) || conf.level <= 0 || conf.level >= 1) {
     stop("Argument 'conf.level' must be a number between 0 and 1.")
+  }
 
-  if (!is.numeric(nboot) || nboot <= 0 || nboot %% 1 != 0)
+  if (!is.numeric(nboot) || nboot <= 0 || nboot %% 1 != 0) {
     stop("Argument 'nboot' must be a positive integer.")
+  }
 
-  if (!bmethod %in% c("bca", "perc", "norm"))
-    stop("Argument 'bmethod' must be one of 'bca', 'perc', or 'norm'.")
+  if (!ci.method %in% c("bca", "perc", "norm")) {
+    stop("Argument 'ci.method' must be one of 'bca', 'perc', or 'norm'.")
+  }
 
-  if (!is.numeric(nd) || nd < 0 || nd %% 1 != 0)
+  if (!is.numeric(nd) || nd < 0 || nd %% 1 != 0) {
     stop("Argument 'nd' must be a non-negative integer.")
+  }
 
-  if (!is.null(group) && length(group) != nrow(data))
+  if (!is.null(group) && length(group) != nrow(data)) {
     stop("Length of 'group' must match the number of rows in 'data'.")
+  }
 
-  if (!requireNamespace("boot", quietly = TRUE))
-    stop("Package 'boot' is required for bootstrap computation.", call. = FALSE)
+  if (ci && !requireNamespace("boot", quietly = TRUE)) {
+    stop("Package 'boot' is required when ci = TRUE.", call. = FALSE)
+  }
+
+  if (rmethod == "poly" && !requireNamespace("psych", quietly = TRUE)) {
+    stop("Package 'psych' is required when rmethod = 'poly'.", call. = FALSE)
+  }
 
   # --- HANDLE MISSING VALUES ---
   if (is.null(group)) {
@@ -261,8 +277,9 @@ aiicor <- function(data,
     message("Rows with missing values were removed.")
   }
 
-  if (nrow(data) <= 3)
+  if (nrow(data) <= 3) {
     stop("Not enough data to compute inter-item correlations.")
+  }
 
   # --- KEEP ONLY NUMERIC COLUMNS ---
   num_cols <- vapply(data, is.numeric, logical(1))
@@ -271,8 +288,38 @@ aiicor <- function(data,
     message("Non-numeric columns were removed.")
   }
 
-  if (ncol(data) < 2)
+  if (ncol(data) < 2) {
     stop("At least two numeric items are required to compute inter-item correlations.")
+  }
+
+  # --- AUXILIARY: correlation matrix ---
+  get_cor_matrix <- function(sub_data, rmethod) {
+    if (rmethod == "poly") {
+      psych::polychoric(sub_data, correct = TRUE)$rho
+    } else {
+      stats::cor(sub_data, method = rmethod)
+    }
+  }
+
+  # --- AUXILIARY: average inter-item correlation from matrix ---
+  get_aii_stats <- function(cor_matrix) {
+    cor_values <- cor_matrix[lower.tri(cor_matrix)]
+
+    # Prevent infinite values in Fisher transform
+    cor_values[cor_values >=  1] <-  0.999999
+    cor_values[cor_values <= -1] <- -0.999999
+
+    fisher_z <- atanh(cor_values)
+    z_bar    <- mean(fisher_z)
+    avg_r    <- tanh(z_bar)
+
+    list(
+      avg_r = avg_r,
+      min   = min(cor_values),
+      max   = max(cor_values),
+      sd    = stats::sd(cor_values)
+    )
+  }
 
   # ----- AUXILIARY FUNCTION FOR ONE GROUP -----
   compute_metrics <- function(sub_data, group_name = "total") {
@@ -282,49 +329,62 @@ aiicor <- function(data,
                   "' does not have enough data (need >= 4 rows and >= 2 items)."))
     }
 
-    cor_matrix <- stats::cor(sub_data, method = rmethod)
-    cor_values <- cor_matrix[lower.tri(cor_matrix)]
+    cor_matrix <- get_cor_matrix(sub_data, rmethod)
+    stats_out  <- get_aii_stats(cor_matrix)
 
-    fisher_z   <- atanh(cor_values)
-    z_bar      <- mean(fisher_z)
-    avg_r      <- tanh(z_bar)
-
-    cor_sd  <- stats::sd(cor_values)
-    cor_min <- min(cor_values)
-    cor_max <- max(cor_values)
-
-    # Bootstrap on Fisher's z-mean
-    boot_fun <- function(d, idx) mean(d[idx])
-    boot_obj <- boot::boot(fisher_z, boot_fun, R = nboot)
-
-    z_samples <- as.numeric(boot_obj$t)
-    r_samples <- tanh(z_samples)
-
-    alpha <- 1 - conf.level
-
-    if (bmethod == "bca") {
-      ci_z <- boot::boot.ci(boot_obj, type = "bca", conf = conf.level)$bca[4:5]
-      ci_r <- tanh(ci_z)
-    } else if (bmethod == "perc") {
-      ci_r <- stats::quantile(r_samples,
-                              probs = c(alpha / 2, 1 - alpha / 2),
-                              na.rm = TRUE)
-    } else {  # "norm"
-      se_r  <- stats::sd(r_samples, na.rm = TRUE)
-      crit  <- stats::qnorm(1 - alpha / 2)
-      ci_r  <- c(avg_r - crit * se_r, avg_r + crit * se_r)
-    }
-
-    data.frame(
-      group  = group_name,
-      avg_r  = avg_r,   # unrounded (redondeamos al final)
-      lwr.ci = ci_r[1],
-      upr.ci = ci_r[2],
-      min    = cor_min,
-      max    = cor_max,
-      sd     = cor_sd,
+    out <- data.frame(
+      group = group_name,
+      avg_r = stats_out$avg_r,
+      min   = stats_out$min,
+      max   = stats_out$max,
+      sd    = stats_out$sd,
       row.names = NULL
     )
+
+    if (ci) {
+      boot_fun <- function(d, idx) {
+        samp <- d[idx, , drop = FALSE]
+        cor_b <- get_cor_matrix(samp, rmethod)
+        get_aii_stats(cor_b)$avg_r
+      }
+
+      boot_obj <- boot::boot(data = sub_data, statistic = boot_fun, R = nboot)
+
+      if (ci.method == "bca") {
+        ci_obj <- boot::boot.ci(boot_obj, type = "bca", conf = conf.level)
+        if (is.null(ci_obj$bca)) {
+          warning(paste0("BCa CI could not be computed for group '", group_name,
+                         "'. Returning NA for CI limits."))
+          ci_vals <- c(NA_real_, NA_real_)
+        } else {
+          ci_vals <- ci_obj$bca[4:5]
+        }
+      } else if (ci.method == "perc") {
+        ci_obj <- boot::boot.ci(boot_obj, type = "perc", conf = conf.level)
+        if (is.null(ci_obj$percent)) {
+          warning(paste0("Percentile CI could not be computed for group '", group_name,
+                         "'. Returning NA for CI limits."))
+          ci_vals <- c(NA_real_, NA_real_)
+        } else {
+          ci_vals <- ci_obj$percent[4:5]
+        }
+      } else {  # norm
+        ci_obj <- boot::boot.ci(boot_obj, type = "norm", conf = conf.level)
+        if (is.null(ci_obj$normal)) {
+          warning(paste0("Normal CI could not be computed for group '", group_name,
+                         "'. Returning NA for CI limits."))
+          ci_vals <- c(NA_real_, NA_real_)
+        } else {
+          ci_vals <- ci_obj$normal[2:3]
+        }
+      }
+
+      out$lwr.ci <- ci_vals[1]
+      out$upr.ci <- ci_vals[2]
+      out <- out[, c("group", "avg_r", "lwr.ci", "upr.ci", "min", "max", "sd")]
+    }
+
+    out
   }
 
   # ---- COMPUTE GROUP-WISE RESULTS ----
@@ -342,130 +402,103 @@ aiicor <- function(data,
     rownames(group_results) <- NULL
   }
 
+  # ---- ROUND VISIBLE NUMBERS ----
+  group_results$avg_r <- round(group_results$avg_r, nd)
+  group_results$min   <- round(group_results$min,   nd)
+  group_results$max   <- round(group_results$max,   nd)
+  group_results$sd    <- round(group_results$sd,    nd)
+
+  if (ci) {
+    group_results$lwr.ci <- round(group_results$lwr.ci, nd)
+    group_results$upr.ci <- round(group_results$upr.ci, nd)
+  }
+
+  # ---- IF ci = FALSE, RETURN ONLY group_results ----
+  if (!ci) {
+    return(group_results)
+  }
+
+  # ---- IF THERE IS ONLY ONE GROUP, RETURN ONLY group_results ----
   k <- nrow(group_results)
+  if (k == 1) {
+    return(group_results)
+  }
 
   # ---- GLOBAL TEST OF HOMOGENEITY (FIXED EFFECTS) + I2 ----
-  if (k > 1) {
-    theta <- group_results$avg_r
-    L     <- group_results$lwr.ci
-    U     <- group_results$upr.ci
+  theta <- group_results$avg_r
+  L     <- group_results$lwr.ci
+  U     <- group_results$upr.ci
 
-    zcrit <- stats::qnorm(1 - (1 - conf.level) / 2)
+  zcrit <- stats::qnorm(1 - (1 - conf.level) / 2)
 
-    se_g  <- (U - L) / (2 * zcrit)
-    var_g <- se_g^2
-    w_g   <- 1 / var_g
+  se_g  <- (U - L) / (2 * zcrit)
+  var_g <- se_g^2
+  w_g   <- 1 / var_g
 
-    theta_pooled <- sum(w_g * theta) / sum(w_g)
-    Q <- sum(w_g * (theta - theta_pooled)^2)
-    df <- k - 1
-    p_global <- 1 - stats::pchisq(Q, df)
+  theta_pooled <- sum(w_g * theta, na.rm = TRUE) / sum(w_g, na.rm = TRUE)
+  Q <- sum(w_g * (theta - theta_pooled)^2, na.rm = TRUE)
+  df <- k - 1
+  p_global <- 1 - stats::pchisq(Q, df)
+  I2 <- if (Q > 0) max(0, (Q - df) / Q) * 100 else 0
 
-    I2 <- if (Q > 0) max(0, (Q - df) / Q) * 100 else 0
-
-    global_test <- data.frame(
-      Q       = round(Q, nd),
-      df      = df,
-      p.value = round(p_global, 4),
-      I2      = round(I2, 1),
-      k       = k,
-      pooled  = round(theta_pooled, nd),
-      row.names = "test"
-    )
-  } else {
-    global_test <- data.frame(
-      Q       = NA_real_,
-      df      = NA_integer_,
-      p.value = NA_real_,
-      I2      = NA_real_,
-      k       = k,
-      pooled  = round(group_results$avg_r[1], nd),
-      row.names = "test"
-    )
-  }
+  global_test <- data.frame(
+    Q       = round(Q, nd),
+    df      = df,
+    p.value = round(p_global, 4),
+    I2      = round(I2, 1),
+    k       = k,
+    pooled  = round(theta_pooled, nd),
+    row.names = "test"
+  )
 
   # ---- MOVER COMPARISONS BETWEEN GROUPS + z, p ----
-  if (k > 1) {
+  if (any(table(group_results$group) != 1)) {
+    stop("Internal error: 'group_results' must contain exactly one row per group.")
+  }
 
-    if (any(table(group_results$group) != 1)) {
-      stop("Internal error: 'group_results' must contain exactly one row per group.")
-    }
+  gnames <- unique(group_results$group)
+  combs  <- utils::combn(gnames, 2, simplify = FALSE)
 
-    gnames <- unique(group_results$group)
-    combs  <- utils::combn(gnames, 2, simplify = FALSE)
+  comparisons <- lapply(combs, function(gs) {
+    g1 <- gs[1]
+    g2 <- gs[2]
 
-    zcrit <- stats::qnorm(1 - (1 - conf.level) / 2)
+    g1_dat <- group_results[group_results$group == g1, ]
+    g2_dat <- group_results[group_results$group == g2, ]
 
-    comparisons <- lapply(combs, function(gs) {
-      g1 <- gs[1]
-      g2 <- gs[2]
+    theta1 <- g1_dat$avg_r
+    L1     <- g1_dat$lwr.ci
+    U1     <- g1_dat$upr.ci
 
-      g1_dat <- group_results[group_results$group == g1, ]
-      g2_dat <- group_results[group_results$group == g2, ]
+    theta2 <- g2_dat$avg_r
+    L2     <- g2_dat$lwr.ci
+    U2     <- g2_dat$upr.ci
 
-      theta1 <- g1_dat$avg_r
-      L1     <- g1_dat$lwr.ci
-      U1     <- g1_dat$upr.ci
+    D <- theta1 - theta2
 
-      theta2 <- g2_dat$avg_r
-      L2     <- g2_dat$lwr.ci
-      U2     <- g2_dat$upr.ci
+    lower_D <- D - sqrt((theta1 - L1)^2 + (U2 - theta2)^2)
+    upper_D <- D + sqrt((U1 - theta1)^2 + (theta2 - L2)^2)
 
-      D <- theta1 - theta2
+    se1 <- (U1 - L1) / (2 * zcrit)
+    se2 <- (U2 - L2) / (2 * zcrit)
+    se_diff <- sqrt(se1^2 + se2^2)
 
-      # MOVER CI for the difference
-      lower_D <- D - sqrt((theta1 - L1)^2 + (U2 - theta2)^2)
-      upper_D <- D + sqrt((U1 - theta1)^2 + (theta2 - L2)^2)
+    z_val <- as.numeric(D / se_diff)
+    p_val <- 2 * (1 - stats::pnorm(abs(z_val)))
 
-      # Wald-type z and p using SE from CI
-      se1 <- (U1 - L1) / (2 * zcrit)
-      se2 <- (U2 - L2) / (2 * zcrit)
-      se_diff <- sqrt(se1^2 + se2^2)
-
-      z_val <- as.numeric(D / se_diff)
-      p_val <- 2 * (1 - stats::pnorm(abs(z_val)))
-
-      data.frame(
-        group1  = g1,
-        group2  = g2,
-        diff    = D,
-        lwr.ci  = lower_D,
-        upr.ci  = upper_D,
-        z       = z_val,
-        p.value = p_val,
-        row.names = NULL
-      )
-    })
-
-    comparisons <- do.call(rbind, comparisons)
-
-  } else {
-    comparisons <- data.frame(
-      group1  = character(0),
-      group2  = character(0),
-      diff    = numeric(0),
-      lwr.ci  = numeric(0),
-      upr.ci  = numeric(0),
-      z       = numeric(0),
-      p.value = numeric(0)
+    data.frame(
+      group1  = g1,
+      group2  = g2,
+      diff    = round(D, nd),
+      lwr.ci  = round(lower_D, nd),
+      upr.ci  = round(upper_D, nd),
+      z       = round(z_val, nd),
+      p.value = round(p_val, 4),
+      row.names = NULL
     )
-  }
+  })
 
-  # ---- ROUND VISIBLE NUMBERS ----
-  group_results$avg_r  <- round(group_results$avg_r,   nd)
-  group_results$lwr.ci <- round(group_results$lwr.ci,  nd)
-  group_results$upr.ci <- round(group_results$upr.ci,  nd)
-  group_results$min    <- round(group_results$min,     nd)
-  group_results$max    <- round(group_results$max,     nd)
-  group_results$sd     <- round(group_results$sd,      nd)
-
-  if (nrow(comparisons) > 0) {
-    comparisons$diff    <- round(comparisons$diff,   nd)
-    comparisons$lwr.ci  <- round(comparisons$lwr.ci, nd)
-    comparisons$upr.ci  <- round(comparisons$upr.ci, nd)
-    comparisons$z       <- round(comparisons$z,      nd)
-    comparisons$p.value <- round(comparisons$p.value, 4)
-  }
+  comparisons <- do.call(rbind, comparisons)
 
   list(
     group_results = group_results,
