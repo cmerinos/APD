@@ -7,10 +7,10 @@
 aiicor(
   data,
   rmethod = "pearson",
-  ci = TRUE,
+  ci = FALSE,
   conf.level = 0.95,
   nboot = 1000,
-  ci.method = "bca",
+  ci.method = "perc",
   nd = 3,
   group = NULL
 )
@@ -21,7 +21,7 @@ aiicor(
 \item{rmethod}{Character. Correlation method: \code{"pearson"} (default), \code{"spearman"},
 or \code{"poly"} for polychoric correlations.}
 
-\item{ci}{Logical. If \code{TRUE} (default), bootstrap confidence intervals are computed.
+\item{ci}{Logical. If \code{FALSE} (default), bootstrap confidence intervals are computed.
 If \code{FALSE}, only point estimates and descriptive summaries are returned.}
 
 \item{conf.level}{Numeric. Confidence level for the interval (default = \code{0.95}).}
@@ -29,7 +29,7 @@ If \code{FALSE}, only point estimates and descriptive summaries are returned.}
 \item{nboot}{Integer. Number of bootstrap samples for CI computation (default = \code{1000}).}
 
 \item{ci.method}{Character. Bootstrap CI method: \code{"bca"} (bias-corrected and accelerated),
-\code{"perc"} (percentile), or \code{"norm"} (normal approximation). Default = \code{"bca"}.}
+\code{"perc"} (percentile), or \code{"norm"} (normal approximation). Default = \code{"perc"}.}
 
 \item{nd}{Integer. Number of decimal digits to round results (default = \code{3}).}
 
