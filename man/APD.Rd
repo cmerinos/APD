@@ -4,39 +4,47 @@
 \alias{APD}
 \title{Average Proportional Distance (APD)}
 \usage{
-APD(data, ncat, ci, conf.level, B, cimethod)
+APD(data, ncat, ci, conf.level, B, cimethod, nd = 3)
 }
 \arguments{
 \item{data}{A \code{data.frame} or matrix containing item responses. Each
 column represents an item scored on the same categorical scale.}
 
-\item{ncat}{Integer. Number of response categories for the items (e.g., 5 for a 1–5 scale).
-Used to convert the average difference into the proportional metric.}
+\item{ncat}{Integer. Number of response categories for the items
+(e.g., 5 for a 1–5 scale). Used to convert the average difference into
+the proportional metric.}
 
 \item{ci}{Logical. Should a bootstrap confidence interval for APD be computed?}
 
-\item{conf.level}{Numeric (0–1). Confidence level (e.g., \code{0.95}) when \code{ci = TRUE}.}
+\item{conf.level}{Numeric (0–1). Confidence level
+(e.g., \code{0.95}) when \code{ci = TRUE}.}
 
-\item{B}{Integer. Number of bootstrap resamples used when computing CIs.}
+\item{B}{Integer. Number of bootstrap resamples used when computing confidence intervals.}
 
-\item{cimethod}{Character. Type of confidence interval: \code{"bca"}, \code{"perc"}, or \code{"norm"}.}
+\item{cimethod}{Character. Type of confidence interval:
+\code{"bca"}, \code{"perc"}, or \code{"norm"}.}
+
+\item{nd}{Integer. Number of digits to round the results. Default is 3.}
 }
 \value{
-A \code{data.frame} with the following rows:
+A one-row \code{data.frame} with the following columns:
 \itemize{
-  \item \code{"Av. diff."}: the average absolute difference \code{AD}.
-  \item \code{"Av. Prop Diff."}: the proportional difference \code{APD}.
-  \item \code{"Low CI"}: bootstrap lower confidence bound (if \code{ci = TRUE}).
-  \item \code{"Upper CI"}: bootstrap upper confidence bound (if \code{ci = TRUE}).
+  \item \code{Estimate}: character string identifying the reported coefficient.
+  \item \code{AD}: average absolute difference between all pairs of item scores.
+  \item \code{APD}: average proportional distance.
+  \item \code{lwr.ci}: lower confidence bound for APD when \code{ci = TRUE};
+  otherwise \code{NA}.
+  \item \code{upr.ci}: upper confidence bound for APD when \code{ci = TRUE};
+  otherwise \code{NA}.
 }
 }
 \description{
 Average Proportional Distance (APD) is a measure of a test's internal
 consistency that focuses on the average difference between item scores.
-To calculate it, you find the absolute difference between every pair of
-item scores, average those differences, and then divide by the number of
-response options (minus one) to get a proportional score, which ranges
-from 0 to 1.
+To calculate it, the absolute difference is obtained for every pair of
+item scores, these differences are averaged, and the result is divided
+by the number of response options minus one to obtain a proportional
+score ranging from 0 to 1.
 }
 \details{
 The APD is computed in three main steps:
@@ -64,16 +72,16 @@ bootstrap resampling. Three interval types are available:
 }
 \section{Interpretation}{
 
-APD quantifies the *average disagreement* between item scores on a 0–1 scale.
+APD quantifies the average disagreement between item scores on a 0–1 scale.
 The following informal guidelines may help interpretation:
 \itemize{
   \item \strong{APD < 0.20}: typically indicates very good internal consistency.
   \item \strong{0.20 ≤ APD ≤ 0.25}: often acceptable depending on the construct.
   \item \strong{APD > 0.25}: may signal weaker internal consistency or heterogeneous item content.
 }
-These values are recommended for Sturman et al. (2009), and they are not strict cutoffs and should
-be interpreted alongside other reliability evidence (e.g., alpha, omega) and substantive test
-characteristics.
+These values were suggested by Sturman et al. (2009), but they are not
+strict cutoffs and should be interpreted alongside other reliability
+evidence (e.g., alpha, omega) and substantive test characteristics.
 }
 
 \examples{
@@ -82,13 +90,16 @@ set.seed(123)
 x <- data.frame(matrix(sample(1:5, 200 * 5, replace = TRUE), ncol = 5))
 
 # APD without confidence interval
-APD(x, ncat = 5, ci = FALSE, conf.level = 0.95, B = 500, cimethod = "perc")
+APD(x, ncat = 5, ci = FALSE, conf.level = 0.95, B = 500,
+    cimethod = "perc", nd = 3)
 
-# APD with 95\% percentile CI
-APD(x, ncat = 5, ci = TRUE, conf.level = 0.95, B = 300, cimethod = "perc")
+# APD with 95\% percentile confidence interval
+APD(x, ncat = 5, ci = TRUE, conf.level = 0.95, B = 300,
+    cimethod = "perc", nd = 3)
 
-# APD with BCa CI
-APD(x, ncat = 5, ci = TRUE, conf.level = 0.95, B = 300, cimethod = "bca")
+# APD with BCa confidence interval
+APD(x, ncat = 5, ci = TRUE, conf.level = 0.95, B = 300,
+    cimethod = "bca", nd = 3)
 }
 
 }
