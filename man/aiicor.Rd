@@ -2,7 +2,7 @@
 % Please edit documentation in R/aiicor.R
 \name{aiicor}
 \alias{aiicor}
-\title{Average Inter-Item Correlation with Bootstrap CI}
+\title{Average Inter-Item Correlation with Optional Bootstrap Confidence Intervals}
 \usage{
 aiicor(
   data,
@@ -15,87 +15,124 @@ aiicor(
 )
 }
 \arguments{
-\item{data}{A \code{data.frame} of numeric item responses. Rows are observations, columns are items.}
+\item{data}{A \code{data.frame} of numeric item responses. Rows are observations and columns are items.}
 
-\item{rmethod}{Character. Correlation method: \code{"pearson"} (default) or \code{"spearman"}.}
+\item{rmethod}{Character. Correlation method: \code{"pearson"} (default), \code{"spearman"},
+or \code{"poly"} for polychoric correlations.}
 
 \item{conf.level}{Numeric. Confidence level for the interval (default = \code{0.95}).}
 
 \item{nboot}{Integer. Number of bootstrap samples for CI computation (default = \code{1000}).}
 
-\item{bmethod}{Character. Bootstrap CI method: \code{"bca"} (bias-corrected and accelerated),
-\code{"perc"} (percentile), or \code{"norm"} (normal approximation). Default = \code{"bca"}.}
-
 \item{nd}{Integer. Number of decimal digits to round results (default = \code{3}).}
 
 \item{group}{Optional vector indicating group membership (factor, character, or numeric).
-If supplied, group-wise aii will be calculated and pairwise differences between groups
-will be reported.}
+If supplied, group-wise aii will be calculated. When \code{ci = TRUE} and more than one
+group is present, pairwise differences and a global homogeneity test are also reported.}
+
+\item{ci}{Logical. If \code{TRUE} (default), bootstrap confidence intervals are computed.
+If \code{FALSE}, only point estimates and descriptive summaries are returned.}
+
+\item{ci.method}{Character. Bootstrap CI method: \code{"bca"} (bias-corrected and accelerated),
+\code{"perc"} (percentile), or \code{"norm"} (normal approximation). Default = \code{"bca"}.}
 }
 \value{
-A list with three components:
+The returned object depends on \code{ci} and the number of groups:
+
 \itemize{
-  \item \code{group_results}: A \code{data.frame} containing, for each group:
-  \itemize{
-    \item \code{group}: Group label.
-    \item \code{avg_r}: Average inter-item correlation (back-transformed from Fisher's z).
-    \item \code{lwr.ci}, \code{upr.ci}: Lower and upper bounds of the bootstrap confidence interval.
-    \item \code{min}, \code{max}: Minimum and maximum inter-item correlations in the matrix.
-    \item \code{sd}: Standard deviation of inter-item correlations.
-  }
+  \item If \code{ci = FALSE}, the function returns a \code{data.frame} with one row per group and
+  the columns \code{group}, \code{avg_r}, \code{min}, \code{max}, and \code{sd}.
 
-  \item \code{comparisons}: A \code{data.frame} containing all pairwise comparisons between groups:
-  \itemize{
-    \item \code{group1}, \code{group2}: The groups being compared.
-    \item \code{diff}: Difference in average inter-item correlations
-      (\code{avg_r_group1 - avg_r_group2}).
-    \item \code{lwr.ci}, \code{upr.ci}: MOVER-type confidence interval limits for the difference.
-    \item \code{z}: Wald-type test statistic for the difference.
-    \item \code{p.value}: Two-sided p-value associated with the Wald statistic.
-  }
+  \item If \code{ci = TRUE} and only one group is present (including \code{group = NULL}),
+  the function returns a \code{data.frame} with the columns \code{group}, \code{avg_r},
+  \code{lwr.ci}, \code{upr.ci}, \code{min}, \code{max}, and \code{sd}.
 
-  \item \code{global_test}: A \code{data.frame} with a single row (labelled \code{"test"})
-  summarizing the fixed-effects homogeneity test across all groups:
+  \item If \code{ci = TRUE} and more than one group is present, the function returns a list
+  with three components:
   \itemize{
-    \item \code{Q}: Cochran-type Q statistic for homogeneity of the group-specific aii values.
-    \item \code{df}: Degrees of freedom (\code{G - 1}, where \code{G} is the number of groups).
-    \item \code{p.value}: p-value for the Q statistic under the chi-square approximation.
-    \item \code{I2}: Percentage of heterogeneity (\eqn{I^2}), expressing the proportion of
-      between-group variability beyond sampling error (in \%).
-    \item \code{k}: Number of groups included in the test.
-    \item \code{pooled}: Fixed-effect pooled estimate of the average inter-item correlation.
+    \item \code{group_results}: A \code{data.frame} containing, for each group:
+    \itemize{
+      \item \code{group}: Group label.
+      \item \code{avg_r}: Average inter-item correlation (back-transformed from Fisher's z).
+      \item \code{lwr.ci}, \code{upr.ci}: Lower and upper bounds of the bootstrap confidence interval.
+      \item \code{min}, \code{max}: Minimum and maximum inter-item correlations in the matrix.
+      \item \code{sd}: Standard deviation of inter-item correlations.
+    }
+
+    \item \code{comparisons}: A \code{data.frame} containing all pairwise comparisons between groups:
+    \itemize{
+      \item \code{group1}, \code{group2}: The groups being compared.
+      \item \code{diff}: Difference in average inter-item correlations
+        (\code{avg_r_group1 - avg_r_group2}).
+      \item \code{lwr.ci}, \code{upr.ci}: MOVER-type confidence interval limits for the difference.
+      \item \code{z}: Wald-type test statistic for the difference.
+      \item \code{p.value}: Two-sided p-value associated with the Wald statistic.
+    }
+
+    \item \code{global_test}: A \code{data.frame} with a single row (labelled \code{"test"})
+    summarizing the fixed-effects homogeneity test across all groups:
+    \itemize{
+      \item \code{Q}: Cochran-type Q statistic for homogeneity of the group-specific aii values.
+      \item \code{df}: Degrees of freedom (\code{G - 1}, where \code{G} is the number of groups).
+      \item \code{p.value}: p-value for the Q statistic under the chi-square approximation.
+      \item \code{I2}: Percentage of heterogeneity (\eqn{I^2}), expressing the proportion of
+        between-group variability beyond sampling error (in \%).
+      \item \code{k}: Number of groups included in the test.
+      \item \code{pooled}: Fixed-effect pooled estimate of the average inter-item correlation.
+    }
   }
-  If only one group is present (or \code{group = NULL}), \code{comparisons} is returned as an
-  empty \code{data.frame}, and the fields in \code{global_test} are provided for completeness
-  but the homogeneity test is not meaningful.
 }
 }
 \description{
 Computes the average inter-item correlation (aii) for a set of items, with optional bootstrap
-confidence intervals. It supports Pearson or Spearman correlations and allows grouped analysis.
-Fisher's z-transformation is used to average correlations appropriately. When groups are provided,
-the function also computes MOVER-type confidence intervals and Wald-type tests for the difference
-in aii between all pairs of groups, as well as a global test of homogeneity across groups.
+confidence intervals. It supports Pearson, Spearman, and polychoric correlations and allows
+grouped analysis. Fisher's z-transformation is used to average correlations appropriately.
+When confidence intervals are requested and groups are provided, the function also computes
+MOVER-type confidence intervals and Wald-type tests for the difference in aii between all
+pairs of groups, as well as a global test of homogeneity across groups.
 }
 \details{
-For each group, the function estimates the inter-item correlation matrix, extracts the lower-triangular
-elements, and averages them after applying Fisher's transformation \eqn{z = \mathrm{arctanh}(r)}.
-Bootstrap resampling is performed on the Fisher z values, and the resulting confidence intervals
-are back-transformed to the correlation metric.
+For each group, the function estimates an inter-item correlation matrix using the method
+specified in \code{rmethod}. The unique pairwise inter-item correlations are then extracted
+from the lower-triangular part of the matrix, excluding the diagonal:
+\deqn{
+r_{ij}, \quad i > j.
+}
+In practice, this corresponds to extracting \code{cor_matrix[lower.tri(cor_matrix)]}, which
+yields the set of non-redundant inter-item correlations.
 
-When more than one group is present, two types of inferential summaries are provided:
+These correlations are averaged after applying Fisher's transformation
+\eqn{z = \mathrm{arctanh}(r)}, and the final estimate is back-transformed to the correlation
+metric. This yields an average inter-item correlation that is less biased than the direct
+arithmetic mean of raw correlations, especially when the correlations are moderately large.
+
+When \code{rmethod = "poly"}, the function uses \code{\link[psych:polychoric]{psych::polychoric}}
+with \code{correct = TRUE} to estimate the polychoric correlation matrix. The resulting
+average inter-item correlation is still summarized through Fisher's z-transformation as a
+practical approximation.
+
+When \code{ci = TRUE}, confidence intervals are estimated by nonparametric bootstrap. Bootstrap
+resampling is performed by resampling rows (respondents) from the original data matrix within
+each group, rather than resampling already-computed correlations. Thus, in each bootstrap sample,
+the correlation matrix is recomputed from the resampled item data, and the average inter-item
+correlation is recalculated from that matrix. This row-wise bootstrap strategy is especially
+important for \code{rmethod = "poly"}, because the polychoric matrix must be re-estimated in
+each resample.
+
+When more than one group is present and \code{ci = TRUE}, two types of inferential summaries
+are provided:
 
 \strong{(1) Global test of homogeneity (Q statistic, fixed-effects framework).}
 
 Let \eqn{\hat{\theta}_g} denote the average inter-item correlation (aii) for group \eqn{g}, and let
-\eqn{[L_g, U_g]} be its confidence interval at level \code{conf.level}. An approximate standard error
-for each group is obtained by assuming a normal-based interval:
+\eqn{[L_g, U_g]} be its confidence interval at level \code{conf.level}. An approximate standard
+error for each group is obtained by assuming a normal-based interval:
 \deqn{
 \mathrm{SE}_g \approx \frac{U_g - L_g}{2 z_{1-\alpha/2}},
 }
-where \eqn{\alpha = 1 - \text{conf.level}} and \eqn{z_{1-\alpha/2}} is the corresponding standard normal
-quantile. The within-group variances are then \eqn{V_g = \mathrm{SE}_g^2}, and fixed-effect weights are
-defined as \eqn{w_g = 1 / V_g}.
+where \eqn{\alpha = 1 - \text{conf.level}} and \eqn{z_{1-\alpha/2}} is the corresponding standard
+normal quantile. The within-group variances are then \eqn{V_g = \mathrm{SE}_g^2}, and fixed-effect
+weights are defined as \eqn{w_g = 1 / V_g}.
 
 A pooled (fixed-effect) average inter-item correlation is computed as
 \deqn{
@@ -127,8 +164,8 @@ D = \hat{\theta}_{g_1} - \hat{\theta}_{g_2}.
 }
 
 A MOVER-type (Method Of Variance Estimates Recovery) confidence interval for \eqn{D} is constructed
-using only the endpoints of the group-specific confidence intervals \eqn{[L_{g}, U_{g}]}.
-For example, one form of the MOVER interval is
+using only the endpoints of the group-specific confidence intervals \eqn{[L_{g}, U_{g}]}. For example,
+one form of the MOVER interval is
 \deqn{
 \mathrm{CI}_{\Delta}
 =
@@ -167,16 +204,18 @@ data <- data.frame(
   item3 = rnorm(100)
 )
 
-# Single-group average inter-item correlation
-res1 <- aiicor(data)
-res1$group_results
+# Single-group point estimate only
+aiicor(data, ci = FALSE)
+
+# Single-group estimate with bootstrap CI
+aiicor(data, ci = TRUE)
 
 # Two groups with MOVER and Wald comparisons plus global test
 grp <- rep(c("A", "B"), each = 50)
-res2 <- aiicor(data, rmethod = "spearman", group = grp)
-res2$group_results
-res2$comparisons
-res2$global_test
+res <- aiicor(data, rmethod = "spearman", ci = TRUE, group = grp)
+res$group_results
+res$comparisons
+res$global_test
 
 }
 \references{
