@@ -4,25 +4,25 @@
 \alias{iiacorEigen}
 \title{First eigenvalue from average inter-item association (Kaiser's formula)}
 \usage{
-iiacorEigen(data, cor = c("pearson", "poly", "gamma"), nd = 3)
+iiacorEigen(data, rmethod = c("pearson", "poly", "gamma", "spearman"), nd = 3)
 }
 \arguments{
 \item{data}{A data.frame containing item responses.}
 
-\item{cor}{Type of association: "pearson", "poly", or "gamma".}
+\item{rmethod}{Type of association: "pearson", "poly", "spearman", "gamma".}
 
 \item{nd}{Number of digits to round all numeric results (default = 3).}
 }
 \value{
 A data.frame with:
 \itemize{
-  \item \code{n_items}: Number of items (\eqn{k}).
-  \item \code{mean_assoc}: Average inter-item association
+  \item \code{n.items}: Number of items (\eqn{k}).
+  \item \code{rmean}: Average inter-item association
         (mean of the lower triangular elements of the association matrix,
         excluding the diagonal).
-  \item \code{lambda1_kaiser}: First eigenvalue according to Kaiser's
+  \item \code{lambda1.Kaiser}: First eigenvalue according to Kaiser's
         formula, \eqn{1 + (k - 1)\,\bar{r}}.
-  \item \code{pct_var_percent}: Same quantity expressed as a percentage
+  \item \code{pct.var}: Same quantity expressed as a percentage
         (\code{pct_var * 100}).
 }
 }
@@ -49,15 +49,15 @@ dat_ord <- data.frame(
   item2 = cut(x2, breaks = 4, labels = FALSE),
   item3 = cut(x3, breaks = 4, labels = FALSE)
 )
-iiacorEigen(dat_ord, cor = "poly")
+iiacorEigen(dat_ord, rmethod = "poly")
 
 }
 \references{
-Cureton, E. E. (1971). A Measure of the Average Intercorrelation. 
-Educational and Psychological Measurement, 31(3), 627-628. 
+Cureton, E. E. (1971). A Measure of the Average Intercorrelation.
+Educational and Psychological Measurement, 31(3), 627-628.
 https://doi.org/10.1177/001316447103100303
 
-Kaiser, H. F. (1968). A Measure of the Average Intercorrelation. 
-Educational and Psychological Measurement, 28(2), 245-247. 
+Kaiser, H. F. (1968). A Measure of the Average Intercorrelation.
+Educational and Psychological Measurement, 28(2), 245-247.
 https://doi.org/10.1177/001316446802800203
 }
