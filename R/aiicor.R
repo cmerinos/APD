@@ -115,12 +115,12 @@
 #' @param data A \code{data.frame} of numeric item responses. Rows are observations and columns are items.
 #' @param rmethod Character. Correlation method: \code{"pearson"} (default), \code{"spearman"},
 #'   or \code{"poly"} for polychoric correlations.
-#' @param ci Logical. If \code{TRUE} (default), bootstrap confidence intervals are computed.
+#' @param ci Logical. If \code{FALSE} (default), bootstrap confidence intervals are computed.
 #'   If \code{FALSE}, only point estimates and descriptive summaries are returned.
 #' @param conf.level Numeric. Confidence level for the interval (default = \code{0.95}).
 #' @param nboot Integer. Number of bootstrap samples for CI computation (default = \code{1000}).
 #' @param ci.method Character. Bootstrap CI method: \code{"bca"} (bias-corrected and accelerated),
-#'   \code{"perc"} (percentile), or \code{"norm"} (normal approximation). Default = \code{"bca"}.
+#'   \code{"perc"} (percentile), or \code{"norm"} (normal approximation). Default = \code{"perc"}.
 #' @param nd Integer. Number of decimal digits to round results (default = \code{3}).
 #' @param group Optional vector indicating group membership (factor, character, or numeric).
 #'   If supplied, group-wise aii will be calculated. When \code{ci = TRUE} and more than one
@@ -217,10 +217,10 @@
 #' @export
 aiicor <- function(data,
                    rmethod    = "pearson",
-                   ci         = TRUE,
+                   ci         = FALSE,
                    conf.level = 0.95,
                    nboot      = 1000,
-                   ci.method  = "bca",
+                   ci.method  = "perc",
                    nd         = 3,
                    group      = NULL) {
 
