@@ -191,7 +191,7 @@ APDmg <- function(data, ncat, group, ci = TRUE, conf.level = 0.95, B = 1000, cim
       }
     }
 
-    return(data.frame(group = g, APD = APD, LCI = LCI, UCI = UCI))
+    return(data.frame(group = g, APD = APD, lwr.ci = LCI, upr.ci = UCI))
   })
 
   # Combinar los resultados en un data.frame
