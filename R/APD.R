@@ -150,6 +150,7 @@ APD <- function(data, ncat, ci, conf.level, B, cimethod) {
 
     # Calcular el intervalo de confianza de acuerdo al método seleccionado
     if (cimethod == "bca") {
+
       # Método de corrección de sesgo y aceleración (BCa)
       boot_obj <- boot(data, statistic = function(data, idx) boot_apd(data[idx, ], ncat), R = B)
       # Look in https://stats.stackexchange.com/questions/37918/why-is-the-error-estimated-adjustment-a-is-na-generated-from-r-boot-package
@@ -157,10 +158,12 @@ APD <- function(data, ncat, ci, conf.level, B, cimethod) {
       LCI <- round(ci_bca$bca[4], 3)  # Límite inferior del IC
       UCI <- round(ci_bca$bca[5], 3)  # Límite superior del IC
     } else if (cimethod == "perc") {
+
       # Método percentil
       LCI <- round(quantile(boot_samples, probs = (1 - conf.level) / 2), 3)
       UCI <- round(quantile(boot_samples, probs = 1 - (1 - conf.level) / 2), 3)
     } else if (cimethod == "norm") {
+
       # Método normal basado en la media y la desviación estándar
       se <- sd(boot_samples)  # Desviación estándar de las muestras bootstrap
       mean_boot <- mean(boot_samples)  # Media de las muestras bootstrap
@@ -170,18 +173,22 @@ APD <- function(data, ncat, ci, conf.level, B, cimethod) {
     }
   }
 
-  # Crear el dataframe de resultados
+  # Crear el dataframe de resultados en formato compacto
   if (ci) {
-    # Si se calculó el intervalo de confianza, incluir LCI y UCI en los resultados
     resultados <- data.frame(
-      Parameters = c("Av. diff.", "Av. Prop Diff.", "Low CI", "Upper CI"),
-      Value = c(round(AD, 3), APD, LCI, UCI)
+      Estimate = "APD",
+      AD = round(AD, 3),
+      APD = APD,
+      lwr.ci = LCI,
+      upr.ci = UCI
     )
   } else {
-    # Si no se calculó el intervalo de confianza, solo incluir AD y APD
     resultados <- data.frame(
-      Parameters = c("Av. diff.", "Av. Prop Diff."),
-      Value = c(round(AD, 3), APD)
+      Estimate = "APD",
+      AD = round(AD, 3),
+      APD = APD,
+      lwr.ci = NA,
+      upr.ci = NA
     )
   }
 
