@@ -11,7 +11,8 @@ APDmg(
   ci = TRUE,
   conf.level = 0.95,
   B = 1000,
-  cimethod = "bca"
+  cimethod = "bca",
+  nd = 3
 )
 }
 \arguments{
@@ -107,6 +108,9 @@ using a MOVER-type (Method Of Variance Estimates Recovery) confidence
 interval, which combines the uncertainty of the two APD estimates.
 This MOVER approach is considered experimental but reasonable for
 exploratory comparison of APD values across groups.
+Note: Missing values are handled by pairwise deletion at the level of item
+differences. That is, a given paired difference is omitted only when one or
+both item responses involved in that difference are missing.
 }
 \examples{
 set.seed(123)

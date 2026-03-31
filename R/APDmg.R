@@ -12,6 +12,9 @@
 #' interval, which combines the uncertainty of the two APD estimates.
 #' This MOVER approach is considered experimental but reasonable for
 #' exploratory comparison of APD values across groups.
+#' Note: Missing values are handled by pairwise deletion at the level of item
+#' differences. That is, a given paired difference is omitted only when one or
+#' both item responses involved in that difference are missing.
 #'
 #' @param data A \code{data.frame} of item responses. Rows are respondents and
 #'   columns are items. All columns must be numeric or integer-encoded item
@@ -126,120 +129,155 @@
 #' res$comparisons
 #'
 #' @export
-APDmg <- function(data, ncat, group, ci = TRUE, conf.level = 0.95, B = 1000, cimethod = "bca") {
-  library(boot)
+APDmg <- function(data, ncat, group, ci = TRUE, conf.level = 0.95,
+                  B = 1000, cimethod = "bca", nd = 3) {
 
-  # Validaciones
-  if (!is.data.frame(data)) stop("El argumento 'data' debe ser un data.frame.")
-  if (missing(group)) stop("El argumento 'group' es obligatorio para calcular APD por grupos.")
-  if (length(group) != nrow(data)) stop("El vector 'group' debe tener la misma longitud que el número de filas de 'data'.")
-  if (!cimethod %in% c("norm", "basic", "stud", "perc", "bca")) {
-    stop("El método seleccionado no es válido. Usa uno de: 'norm', 'basic', 'stud', 'perc', 'bca'.")
+  if (!requireNamespace("boot", quietly = TRUE)) {
+    stop("Package 'boot' is required.")
   }
 
-  # Función auxiliar para calcular APD para un grupo específico
+  # Validations
+  if (!is.data.frame(data)) {
+    stop("Argument 'data' must be a data.frame.")
+  }
+
+  if (missing(group)) {
+    stop("Argument 'group' is required to compute APD by groups.")
+  }
+
+  if (length(group) != nrow(data)) {
+    stop("Argument 'group' must have the same length as the number of rows in 'data'.")
+  }
+
+  if (!is.numeric(ncat) || length(ncat) != 1 || ncat <= 1) {
+    stop("Argument 'ncat' must be a single number greater than 1.")
+  }
+
+  if (!cimethod %in% c("norm", "basic", "stud", "perc", "bca")) {
+    stop("Invalid 'cimethod'. Use one of: 'norm', 'basic', 'stud', 'perc', 'bca'.")
+  }
+
+  if (cimethod == "stud") {
+    stop("Method 'stud' is not implemented because it requires additional variance estimates.")
+  }
+
+  # Internal function: computes AD and APD for one group
   compute_apd <- function(sub_data, ncat) {
     column_combinations <- combn(ncol(sub_data), 2)
-    diff_abs_list <- list()
-    for (i in 1:ncol(column_combinations)) {
+    diff_abs_list <- vector("list", ncol(column_combinations))
+
+    for (i in seq_len(ncol(column_combinations))) {
       col1 <- column_combinations[1, i]
       col2 <- column_combinations[2, i]
       diff_abs_list[[i]] <- abs(sub_data[[col1]] - sub_data[[col2]])
     }
+
     all_diff_abs <- unlist(diff_abs_list)
     AD <- mean(all_diff_abs, na.rm = TRUE)
-    APD <- round(AD / (ncat - 1), 3)
-    return(APD)
+    APD <- AD / (ncat - 1)
+
+    return(c(AD = AD, APD = APD))
   }
 
-  # Bootstrap para intervalos de confianza
-  bootstrap_apd <- function(data, ncat) {
+  # Bootstrap for APD only
+  bootstrap_apd <- function(data, ncat, B) {
     boot_apd <- function(data, idx) {
       sample_data <- data[idx, , drop = FALSE]
-      compute_apd(sample_data, ncat)
+      compute_apd(sample_data, ncat)["APD"]
     }
-    boot_obj <- boot(data, statistic = boot_apd, R = B)
-    return(boot_obj)
+
+    boot::boot(data = data, statistic = boot_apd, R = B)
   }
 
-  # Calcular APD y CI por grupo
+  # APD and CI by group
   unique_groups <- unique(group)
+
   group_results <- lapply(unique_groups, function(g) {
     sub_data <- data[group == g, , drop = FALSE]
-    APD <- compute_apd(sub_data, ncat)
+    est <- compute_apd(sub_data, ncat)
 
-    # Intervalos de confianza
-    LCI <- NA
-    UCI <- NA
+    lwr.ci <- NA_real_
+    upr.ci <- NA_real_
+
     if (ci) {
-      boot_obj <- bootstrap_apd(sub_data, ncat)
-      ci_obj <- boot.ci(boot_obj, type = cimethod, conf = conf.level)
+      boot_obj <- bootstrap_apd(sub_data, ncat, B)
+      ci_obj <- boot::boot.ci(boot_obj, type = cimethod, conf = conf.level)
+
       if (cimethod == "bca") {
-        LCI <- round(ci_obj$bca[4], 3)
-        UCI <- round(ci_obj$bca[5], 3)
+        lwr.ci <- ci_obj$bca[4]
+        upr.ci <- ci_obj$bca[5]
       } else if (cimethod == "perc") {
-        LCI <- round(ci_obj$percent[4], 3)
-        UCI <- round(ci_obj$percent[5], 3)
+        lwr.ci <- ci_obj$percent[4]
+        upr.ci <- ci_obj$percent[5]
       } else if (cimethod == "norm") {
-        LCI <- round(ci_obj$normal[2], 3)
-        UCI <- round(ci_obj$normal[3], 3)
+        lwr.ci <- ci_obj$normal[2]
+        upr.ci <- ci_obj$normal[3]
       } else if (cimethod == "basic") {
-        LCI <- round(ci_obj$basic[4], 3)
-        UCI <- round(ci_obj$basic[5], 3)
-      } else if (cimethod == "stud") {
-        stop("El método 'stud' requiere estadísticas de error adicionales. Por favor, usa otro método.")
+        lwr.ci <- ci_obj$basic[4]
+        upr.ci <- ci_obj$basic[5]
       }
     }
 
-    return(data.frame(group = g, APD = APD, LCI = LCI, UCI = UCI))
+    data.frame(
+      group  = g,
+      AD     = round(unname(est["AD"]), nd),
+      APD    = round(unname(est["APD"]), nd),
+      lwr.ci = round(lwr.ci, nd),
+      upr.ci = round(upr.ci, nd)
+    )
   })
 
-  # Combinar los resultados en un data.frame
-  group_results <- do.call(rbind, group_results)
+  APD.group <- do.call(rbind, group_results)
+  rownames(APD.group) <- NULL
 
-  # Comparaciones entre grupos
-  if (nrow(group_results) > 1) {
-    combinations <- combn(group_results$group, 2, simplify = FALSE)
-    comparisons <- lapply(combinations, function(groups) {
+  # Pairwise comparisons
+  if (nrow(APD.group) > 1) {
+    combinations <- combn(APD.group$group, 2, simplify = FALSE)
+
+    Comparisons <- lapply(combinations, function(groups) {
       group1 <- groups[1]
       group2 <- groups[2]
 
-      APD1 <- group_results$APD[group_results$group == group1]
-      APD2 <- group_results$APD[group_results$group == group2]
-      LCI1 <- group_results$LCI[group_results$group == group1]
-      UCI1 <- group_results$UCI[group_results$group == group1]
-      LCI2 <- group_results$LCI[group_results$group == group2]
-      UCI2 <- group_results$UCI[group_results$group == group2]
+      APD1 <- APD.group$APD[APD.group$group == group1]
+      APD2 <- APD.group$APD[APD.group$group == group2]
+      lwr1 <- APD.group$lwr.ci[APD.group$group == group1]
+      upr1 <- APD.group$upr.ci[APD.group$group == group1]
+      lwr2 <- APD.group$lwr.ci[APD.group$group == group2]
+      upr2 <- APD.group$upr.ci[APD.group$group == group2]
 
-      # Diferencia entre APDs
       difference <- APD1 - APD2
 
-      # Método MOVER para intervalos de confianza
-      lower_diff <- difference - sqrt((APD1 - LCI1)^2 + (UCI2 - APD2)^2)
-      upper_diff <- difference + sqrt((UCI1 - APD1)^2 + (APD2 - LCI2)^2)
+      if (ci) {
+        lower_diff <- difference - sqrt((APD1 - lwr1)^2 + (upr2 - APD2)^2)
+        upper_diff <- difference + sqrt((upr1 - APD1)^2 + (APD2 - lwr2)^2)
+      } else {
+        lower_diff <- NA_real_
+        upper_diff <- NA_real_
+      }
 
       data.frame(
-        group1 = group1,
-        group2 = group2,
-        Difference = round(difference, 3),
-        lwr.ci = round(lower_diff, 3),
-        upr.ci = round(upper_diff, 3)
+        group1     = group1,
+        group2     = group2,
+        Difference = round(difference, nd),
+        lwr.ci     = round(lower_diff, nd),
+        upr.ci     = round(upper_diff, nd)
       )
     })
-    comparisons <- do.call(rbind, comparisons)
+
+    Comparisons <- do.call(rbind, Comparisons)
+    rownames(Comparisons) <- NULL
   } else {
-    comparisons <- data.frame(
-      group1 = character(0),
-      group2 = character(0),
+    Comparisons <- data.frame(
+      group1     = character(0),
+      group2     = character(0),
       Difference = numeric(0),
-      lwr.ci = numeric(0),
-      upr.ci = numeric(0)
+      lwr.ci     = numeric(0),
+      upr.ci     = numeric(0)
     )
   }
 
-  # Retornar resultados
   return(list(
-    APD.group = group_results,
-    Comparisons = comparisons
+    APD.group   = APD.group,
+    Comparisons = Comparisons
   ))
 }
