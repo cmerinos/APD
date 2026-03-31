@@ -6,28 +6,28 @@
 #' component.
 #'
 #' @param data A data.frame containing item responses.
-#' @param cor Type of association: "pearson", "poly", or "gamma".
+#' @param rmethod Type of association: "pearson", "poly", "spearman", "gamma".
 #' @param nd Number of digits to round all numeric results (default = 3).
 #'
 #' @return A data.frame with:
 #' \itemize{
-#'   \item \code{n_items}: Number of items (\eqn{k}).
-#'   \item \code{mean_assoc}: Average inter-item association
+#'   \item \code{n.items}: Number of items (\eqn{k}).
+#'   \item \code{rmean}: Average inter-item association
 #'         (mean of the lower triangular elements of the association matrix,
 #'         excluding the diagonal).
-#'   \item \code{lambda1_kaiser}: First eigenvalue according to Kaiser's
+#'   \item \code{lambda1.Kaiser}: First eigenvalue according to Kaiser's
 #'         formula, \eqn{1 + (k - 1)\,\bar{r}}.
-#'   \item \code{pct_var_percent}: Same quantity expressed as a percentage
+#'   \item \code{pct.var}: Same quantity expressed as a percentage
 #'         (\code{pct_var * 100}).
 #' }
 #'
 #'@references
-#'Cureton, E. E. (1971). A Measure of the Average Intercorrelation. 
-#'Educational and Psychological Measurement, 31(3), 627-628. 
+#'Cureton, E. E. (1971). A Measure of the Average Intercorrelation.
+#'Educational and Psychological Measurement, 31(3), 627-628.
 #'https://doi.org/10.1177/001316447103100303
 #'
-#'Kaiser, H. F. (1968). A Measure of the Average Intercorrelation. 
-#'Educational and Psychological Measurement, 28(2), 245-247. 
+#'Kaiser, H. F. (1968). A Measure of the Average Intercorrelation.
+#'Educational and Psychological Measurement, 28(2), 245-247.
 #'https://doi.org/10.1177/001316446802800203
 #'
 #'
@@ -49,30 +49,30 @@
 #'   item2 = cut(x2, breaks = 4, labels = FALSE),
 #'   item3 = cut(x3, breaks = 4, labels = FALSE)
 #' )
-#' iiacorEigen(dat_ord, cor = "poly")
+#' iiacorEigen(dat_ord, rmethod = "poly")
 #'
 #' @export
-iiacorEigen <- function(data, cor = c("pearson", "poly", "gamma"), nd = 3) {
-  cor <- match.arg(cor)
-  
+iiacorEigen <- function(data, rmethod = c("pearson", "poly", "gamma", "spearman"), nd = 3) {
+  cor <- match.arg(rmethod)
+
   if (!is.data.frame(data))
     data <- as.data.frame(data)
-  
+
   k <- ncol(data)
   if (k < 2L)
     stop("'data' must contain at least two item columns.")
-  
+
   # ---- Association matrix ----
   R <- switch(
     cor,
     "pearson" = stats::cor(data, use = "pairwise.complete.obs"),
-    
+
     "poly" = {
       if (!requireNamespace("psych", quietly = TRUE))
         stop("Package 'psych' is required for polychoric correlations.")
       psych::polychoric(data)$rho
     },
-    
+
     "gamma" = {
       if (!requireNamespace("vcd", quietly = TRUE))
         stop("Package 'vcd' is required for gamma.")
@@ -88,24 +88,24 @@ iiacorEigen <- function(data, cor = c("pearson", "poly", "gamma"), nd = 3) {
       G
     }
   )
-  
+
   # ---- Average inter-item association ----
   mean_assoc <- mean(R[lower.tri(R)])
-  
+
   # ---- Kaiser's formula ----
   lambda1 <- 1 + (k - 1) * mean_assoc
   pct_var_percent <- (lambda1 / k) * 100
-  
+
   # ---- Output with rounding ----
   out <- data.frame(
-    n_items         = k,
-    mean_assoc      = round(mean_assoc, nd),
-    lambda1_kaiser  = round(lambda1, nd),
-    pct_var_percent = round(pct_var_percent, nd)
+    n.items         = k,
+    rmean      = round(mean_assoc, nd),
+    lambda1.Kaiser  = round(lambda1, nd),
+    pct.var = round(pct_var_percent, nd)
   )
-  
+
   attr(out, "association_matrix") <- R
   attr(out, "cor.type") <- cor
-  
+
   out
 }
