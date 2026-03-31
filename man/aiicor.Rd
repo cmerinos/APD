@@ -7,9 +7,10 @@
 aiicor(
   data,
   rmethod = "pearson",
+  ci = TRUE,
   conf.level = 0.95,
   nboot = 1000,
-  bmethod = "bca",
+  ci.method = "bca",
   nd = 3,
   group = NULL
 )
@@ -20,21 +21,21 @@ aiicor(
 \item{rmethod}{Character. Correlation method: \code{"pearson"} (default), \code{"spearman"},
 or \code{"poly"} for polychoric correlations.}
 
+\item{ci}{Logical. If \code{TRUE} (default), bootstrap confidence intervals are computed.
+If \code{FALSE}, only point estimates and descriptive summaries are returned.}
+
 \item{conf.level}{Numeric. Confidence level for the interval (default = \code{0.95}).}
 
 \item{nboot}{Integer. Number of bootstrap samples for CI computation (default = \code{1000}).}
+
+\item{ci.method}{Character. Bootstrap CI method: \code{"bca"} (bias-corrected and accelerated),
+\code{"perc"} (percentile), or \code{"norm"} (normal approximation). Default = \code{"bca"}.}
 
 \item{nd}{Integer. Number of decimal digits to round results (default = \code{3}).}
 
 \item{group}{Optional vector indicating group membership (factor, character, or numeric).
 If supplied, group-wise aii will be calculated. When \code{ci = TRUE} and more than one
 group is present, pairwise differences and a global homogeneity test are also reported.}
-
-\item{ci}{Logical. If \code{TRUE} (default), bootstrap confidence intervals are computed.
-If \code{FALSE}, only point estimates and descriptive summaries are returned.}
-
-\item{ci.method}{Character. Bootstrap CI method: \code{"bca"} (bias-corrected and accelerated),
-\code{"perc"} (percentile), or \code{"norm"} (normal approximation). Default = \code{"bca"}.}
 }
 \value{
 The returned object depends on \code{ci} and the number of groups:
