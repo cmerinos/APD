@@ -6,7 +6,7 @@ Proportional Distance**, a measure of internal consistency based on
 pairwise proportional differences between item scores.  
 This approach focuses on the *average discrepancy* between item
 responses (in agreement with Sturman et al., 2009) and complements
-traditional reliability indices.
+inter-item correlation average indices.
 
 ## Features
 
@@ -14,8 +14,8 @@ traditional reliability indices.
 - Supports **bootstrap confidence intervals** for APD.
 - Provides group comparisons based on confidence intervals of the
   difference (MOVER method).
-- Computes average inter–item correlation and group comparison.
-- Returns structured outputs for reproducible analyses.
+- Computes average inter–item correlation and group comparison, more
+  equivalent indices.
 
 ## Installation
 
@@ -32,7 +32,7 @@ devtools::install_github("cmerinos/APD")
 ###### Example 1 ######
 library(APD)
 
-## toy data: 10 persons x 5 items
+## Toy data: 10 persons x 5 items
 set.seed(123)
 dat.example1 <- matrix(sample(1:5, 50, replace = TRUE), ncol = 5)
 
@@ -45,7 +45,7 @@ library(psych)
 ## Loading data
 data("bfi")
 
-## Choosing variables
+## Choosing variables (Neuroticism factor items, more demographics)
 data.bfi <- bfi[, c("N1", "N2", "N3", "N4", "N5", "gender", "age")]
 
 ## Clean for missing values
@@ -60,17 +60,21 @@ APD(data = data.bfi[, 1:5],
       cimethod = "perc",
       conf.level = .95)
 
-## Inter-item average (IIA) correlation for total sample
+## Item-level APD
+APDitem(data = data.bfi[, 1:5], group = data.bfi$gender, 
+        ncat = 5, 
+        ci = T)
+
+## Inter-item average correlation (iia) for total sample
 iiacor(data = data.bfi[, 1:5])
 
-## APD and IIA for sex groups
-
+## APD and iia for sex groups
 data.bfi$gender <- as.factor(data.bfi$gender)
 
 APDmg(data = data.bfi[, 1:5],
       ncat = 5, 
       ci = T, 
-      B = 500, 
+      B = 1000, 
       cimethod = "perc",
       group = data.bfi$gender, 
       conf.level = .95)
@@ -78,8 +82,7 @@ APDmg(data = data.bfi[, 1:5],
 iiacor(data = data.bfi[, 1:5], group = data.bfi$gender)
 
 
-## APD and IAA for customized age groups
-
+## APD and iia for customized age groups
 DescTools::Freq(data.bfi$age)
 
 table(cut(data.bfi$age, breaks = c(0, 20, 30, 40, 50, 90)))
@@ -102,9 +105,10 @@ iiacor(data = data.bfi[, 1:5],
 
 ## Package Structure
 
-- `APD()` – Main function to compute Average Proportional Distance.
+- `APD()` – Compute Average Proportional Distance, for total group.
 - `APDmg()` – Compute Average Proportional Distance for multiple groups.
 - APDitem() – Compute item-level Average Proportional Distance (APD).
+- APDitemmg() – Compute item-level Average Proportional Distance (APD).
 - `aiicor()` – Inter–item average, total and multigroup, more
   supplementary information.
 - rmsiic() – Root-Mean-Square Inter-Item Correlation, based on the
