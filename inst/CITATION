@@ -1,0 +1,30 @@
+citHeader("To cite APD, please use:")
+
+citEntry(
+  entry = "Article",
+  title = "Response consistency for short scale items: R package for implementation of the average proportional distance",
+  author = personList(
+    person("César", "Merino Soto")
+  ),
+  year = "2026",
+  journal = "Ciencias Psicológicas",
+  volume = "XX",
+  pages = "XX-XX",
+  doi = "10.xxxx/xxxxx",
+  textVersion = paste(
+    "Merino Soto, C. (2026).",
+    "Response consistency for short scale items: R package for implementation of the average proportional distance.",
+    "Ciencias Psicológicas."
+  )
+)
+
+citEntry(
+  entry = "Manual",
+  title = "APD: Average Proportional Distance for Item Analysis from Scales",
+  author = personList(
+    person("César", "Merino Soto")
+  ),
+  year = "2026",
+  note = "R package version 0.3.0",
+  url = "https://github.com/usuario/APD"
+)
