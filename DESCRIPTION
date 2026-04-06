@@ -1,17 +1,17 @@
 Package: APD
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Average Proportional Distance
 Version: 0.1.0
 Authors@R: c(
     person(
-      "Jane", "Doe",
-      email = "jane@example.com",
+      "Cesar", "Merino-Soto",
+      email = "sikayax@yahoo.com.ar",
       role = c("aut", "cre")
     )
   )
-Description: More about what it does (maybe more than one line).
-    Continuation lines should be indented.
-License: What license is it under?
+Description: Estimation of average proportional distance more other.
+    suplemental information.
+License: MIT licence
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.3
