@@ -104,7 +104,27 @@ iiacor(data = data.bfi[, 1:5],
 
 - `APD()` – Main function to compute Average Proportional Distance.
 - `APDmg()` – Compute Average Proportional Distance for multiple groups.
-- `iia()` – Inter–item average.
+- APDitem() – Compute item-level Average Proportional Distance (APD).
+- `aiicor()` – Inter–item average, total and multigroup, more
+  supplementary information.
+- rmsiic() – Root-Mean-Square Inter-Item Correlation, based on the
+  squared correlation matrix.
+- aiicorEigen() – the average inter-item association and equivalent
+  first eigenvalue.
+
+## Citation
+
+If you use this package, please cite:
+
+Merino Soto C (2026). APD: Average Proportional Distance for Item
+Analysis from Scales. R package version 0.3.0,
+<https://github.com/usuario/APD>.
+
+You can also obtain the citation in R:
+
+``` r
+citation("APD")
+```
 
 ## References
 
