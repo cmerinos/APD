@@ -9,10 +9,10 @@ This approach focuses on the *average discrepancy* between item responses (in ag
 
 ## Features
 
--   Compute **Average Proportional Distance (APD)** for item sets.
--   Supports **bootstrap confidence intervals** for APD.
--   Provides group comparisons based on confidence intervals of the difference (MOVER method).
--   Computes average inter–item correlation and group comparison, more equivalent indices.
+- Compute **Average Proportional Distance (APD)** for item sets.
+- Supports **bootstrap confidence intervals** for APD.
+- Provides group comparisons based on confidence intervals of the difference (MOVER method).
+- Computes average inter–item correlation and group comparison, more equivalent indices.
 
 ## Installation
 
@@ -104,13 +104,13 @@ iiacor(data = data.bfi[, 1:5],
 
 ## Package Structure
 
--   `APD()` – Compute Average Proportional Distance, for total group.
--   `APDmg()` – Compute Average Proportional Distance for multiple groups.
--   APDitem() – Compute item-level Average Proportional Distance (APD).
--   APDitemmg() – Compute item-level Average Proportional Distance (APD).
--   `aiicor()` – Inter–item average, total and multigroup, more supplementary information.
--   rmsiic() – Root-Mean-Square Inter-Item Correlation, based on the squared correlation matrix.
--   aiicorEigen() – the average inter-item association and equivalent first eigenvalue.
+- `APD()` – Compute Average Proportional Distance, for total group.
+- `APDmg()` – Compute Average Proportional Distance for multiple groups.
+- APDitem() – Compute item-level Average Proportional Distance (APD).
+- APDitemmg() – Compute item-level Average Proportional Distance (APD).
+- `aiicor()` – Inter–item average, total and multigroup, more supplementary information.
+- rmsiic() – Root-Mean-Square Inter-Item Correlation, based on the squared correlation matrix.
+- aiicorEigen() – the average inter-item association and equivalent first eigenvalue.
 
 ## Citation
 
