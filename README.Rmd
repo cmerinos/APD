@@ -81,6 +81,8 @@ iiacor(data = data.bfi[, 1:5], group = data.bfi$gender)
 
 
 ## APD and iia for customized age groups
+
+### Age: cut in levels
 DescTools::Freq(data.bfi$age)
 
 table(cut(data.bfi$age, breaks = c(0, 20, 30, 40, 50, 90)))
