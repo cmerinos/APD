@@ -1,6 +1,7 @@
-# APD 0.3.0
-
-# APD
+# APD 0.2.0
+## New features
+-   Added all functions
+-   Added percentage contribution (%cont) for each item
 
 # APD 0.3.0
 
