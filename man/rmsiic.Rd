@@ -116,6 +116,6 @@ rmsiic(X[1:40, ], group = g, ci = TRUE, B = 300)
 }
 \references{
 Meyer, E. P. (1975). A measure of the average intercorrelation.
-\emph{Educational and Psychological Measurement, 35}(1), 67–72.
+\emph{Educational and Psychological Measurement, 35}(1), 67-72.
 https://doi.org/10.1177/001316447503500107
 }

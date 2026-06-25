@@ -175,11 +175,11 @@
 #'
 #' @references
 #' Briggs, S.R. and Cheek, J.M. (1986). The role of factor analysis in the development and evaluation
-#' of personality scales. \emph{Journal of Personality, 54}, 106–148.
+#' of personality scales. \emph{Journal of Personality, 54}, 106-148.
 #' https://doi.org/10.1111/j.1467-6494.1986.tb00391.x
 #'
 #' Clark, L. A., & Watson, D. (1995). Constructing validity: Basic issues in objective scale development.
-#' \emph{Psychological Assessment, 7}(3), 309–319. https://doi.org/10.1037/1040-3590.7.3.309
+#' \emph{Psychological Assessment, 7}(3), 309-319. https://doi.org/10.1037/1040-3590.7.3.309
 #'
 #' Piedmont, R.L. (2014). Inter-item correlations. In A.C. Michalos (Ed.),
 #' \emph{Encyclopedia of Quality of Life and Well-Being Research}. Springer, Dordrecht.

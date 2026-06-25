@@ -94,17 +94,17 @@
 #'
 #' Newcombe, R. G. (1998). Interval estimation for the difference between
 #' independent proportions: comparison of eleven methods.
-#' \emph{Statistics in Medicine, 17}, 873–890.
+#' \emph{Statistics in Medicine, 17}, 873-890.
 #' \doi{10.1002/(SICI)1097-0258(19980430)17:8<873::AID-SIM779>3.0.CO;2-I}
 #'
 #' Sturman, D., Cribbie, R. A., & Flett, G. L. (2009).
 #' The average distance between item values: A novel approach for estimating
 #' internal consistency. \emph{Educational and Psychological Measurement},
-#' 69(6), 913–932.
+#' 69(6), 913-932.
 #'
 #' Zou, G. Y., & Donner, A. (2008). Construction of confidence limits
 #' about effect measures: A general approach.
-#' \emph{Statistics in Medicine, 27}, 1693–1702.
+#' \emph{Statistics in Medicine, 27}, 1693-1702.
 #' \doi{10.1002/sim.3095}
 #'
 #' @examples

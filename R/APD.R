@@ -27,17 +27,17 @@
 #' When \code{ci = TRUE}, APD confidence intervals are obtained by nonparametric
 #' bootstrap resampling. Three interval types are available:
 #' \itemize{
-#'   \item \code{"bca"} — bias-corrected and accelerated interval.
-#'   \item \code{"perc"} — percentile interval.
-#'   \item \code{"norm"} — normal-approximation interval.
+#'   \item \code{"bca"} - bias-corrected and accelerated interval.
+#'   \item \code{"perc"} - percentile interval.
+#'   \item \code{"norm"} - normal-approximation interval.
 #' }
 #'
 #' @section Interpretation:
-#' APD quantifies the average disagreement between item scores on a 0–1 scale.
+#' APD quantifies the average disagreement between item scores on a 0 to 1 scale.
 #' The following informal guidelines may help interpretation:
 #' \itemize{
 #'   \item \strong{APD < 0.20}: typically indicates very good internal consistency.
-#'   \item \strong{0.20 ≤ APD ≤ 0.25}: often acceptable depending on the construct.
+#'   \item \strong{0.20 <= APD <= 0.25}: often acceptable depending on the construct.
 #'   \item \strong{APD > 0.25}: may signal weaker internal consistency or heterogeneous item content.
 #' }
 #' These values were suggested by Sturman et al. (2009), but they are not
@@ -48,18 +48,18 @@
 #' Sturman, D., Cribbie, R. A., & Flett, G. L. (2009).
 #' The average distance between item values: A novel approach for estimating
 #' internal consistency. \emph{Educational and Psychological Measurement},
-#' 69(6), 913–932.
+#' 69(6), 913-932.
 #'
 #' @param data A \code{data.frame} or matrix containing item responses. Each
 #' column represents an item scored on the same categorical scale.
 #'
 #' @param ncat Integer. Number of response categories for the items
-#' (e.g., 5 for a 1–5 scale). Used to convert the average difference into
+#' (e.g., 5 for a 1-5 scale). Used to convert the average difference into
 #' the proportional metric.
 #'
 #' @param ci Logical. Should a bootstrap confidence interval for APD be computed?
 #'
-#' @param conf.level Numeric (0–1). Confidence level
+#' @param conf.level Numeric (0 to 1). Confidence level
 #' (e.g., \code{0.95}) when \code{ci = TRUE}.
 #'
 #' @param B Integer. Number of bootstrap resamples used when computing confidence intervals.
