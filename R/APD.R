@@ -99,6 +99,8 @@
 #'     cimethod = "bca", nd = 3)
 #' }
 #'
+#'@importFrom utils combn
+#'
 #' @export
 APD <- function(data, ncat, ci, conf.level, B, cimethod, nd = 3) {
 

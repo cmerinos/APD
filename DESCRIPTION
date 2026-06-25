@@ -10,7 +10,7 @@ Authors@R: c(
     )
   )
 Description: Estimation of average proportional distance for repeatibility of responses in scales items, more other suplemental information.
-License: MIT licence
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: TRUE
 Suggests: 

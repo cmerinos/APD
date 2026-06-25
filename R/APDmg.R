@@ -129,6 +129,8 @@
 #' res$APD.group
 #' res$comparisons
 #'
+#'@importFrom utils combn
+#'
 #' @export
 APDmg <- function(data, ncat, group, ci = TRUE, conf.level = 0.95,
                   B = 1000, cimethod = "bca", nd = 3) {
