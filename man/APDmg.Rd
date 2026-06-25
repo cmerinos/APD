@@ -38,9 +38,11 @@ Default is \code{0.95}.}
 intervals within each group. Default is \code{1000}.}
 
 \item{cimethod}{Character string indicating the bootstrap method passed
-  to \code{\link[boot]{boot.ci}}. One of \code{"norm"}, \code{"basic"},
-  \code{"stud"}, \code{"perc"}, or \code{"bca"} (default). The option
-  \code{"stud"} is not currently implemented for this function.
+to \code{\link[boot]{boot.ci}}. One of \code{"norm"}, \code{"basic"},
+\code{"stud"}, \code{"perc"}, or \code{"bca"} (default). The option
+\code{"stud"} is not currently implemented for this function.}
+
+\item{nd}{Integer. Number of digits for the output. Default is \code{3}.
 
 #' @details
 The function applies a MOVER-type (Method Of Variance Estimates Recovery)

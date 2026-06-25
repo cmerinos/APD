@@ -35,6 +35,7 @@
 #'   to \code{\link[boot]{boot.ci}}. One of \code{"norm"}, \code{"basic"},
 #'   \code{"stud"}, \code{"perc"}, or \code{"bca"} (default). The option
 #'   \code{"stud"} is not currently implemented for this function.
+#' @param nd Integer. Number of digits for the output. Default is \code{3}.
 #'
 #'#' @details
 #' The function applies a MOVER-type (Method Of Variance Estimates Recovery)
