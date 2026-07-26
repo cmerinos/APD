@@ -1,12 +1,10 @@
 citHeader("To cite APD, please use:")
 
-citHeader("To cite APD, please use:")
-
 bibentry(
   bibtype = "Article",
   title = "Response consistency for short scale items: R package for implementation of the average proportional distance",
   author = c(
-    person("César", "Merino Soto")
+    person("César", "Merino-Soto")
   ),
   year = "2026",
   journal = "Ciencias Psicológicas"
@@ -16,7 +14,7 @@ bibentry(
   bibtype = "Manual",
   title = "APD: Average Proportional Distance for Item Analysis from Scales",
   author = c(
-    person("César", "Merino Soto")
+    person("César", "Merino-Soto")
   ),
   year = "2026",
   note = "R package version 1.0.1",
