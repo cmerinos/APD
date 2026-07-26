@@ -4,3 +4,4 @@
 ^\.positai$
 ^\.claude$
 ^LICENSE\.md$
+^cran-comments\.md$
