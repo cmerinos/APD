@@ -24,11 +24,11 @@
 #'
 #' @references
 #' Cureton, E. E. (1971). A Measure of the Average Intercorrelation.
-#' Educational and Psychological Measurement, 31(3), 627-628.
+#' \emph{Educational and Psychological Measurement}, 31(3), 627-628.
 #' \doi{10.1177/001316447103100303}
 #'
 #' Kaiser, H. F. (1968). A Measure of the Average Intercorrelation.
-#' Educational and Psychological Measurement, 28(2), 245-247.
+#' \emph{Educational and Psychological Measurement}, 28(2), 245-247.
 #' \doi{10.1177/001316446802800203}
 #'
 #' @examples

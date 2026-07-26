@@ -44,12 +44,6 @@
 #' strict cutoffs and should be interpreted alongside other reliability
 #' evidence (e.g., alpha, omega) and substantive test characteristics.
 #'
-#' @references
-#' Sturman, D., Cribbie, R. A., & Flett, G. L. (2009).
-#' The average distance between item values: A novel approach for estimating
-#' internal consistency. \emph{Educational and Psychological Measurement},
-#' 69(6), 913-932.
-#'
 #' @param data A \code{data.frame} or matrix containing item responses. Each
 #' column represents an item scored on the same categorical scale.
 #'
@@ -80,6 +74,12 @@
 #'   \item \code{upr.ci}: upper confidence bound for APD when \code{ci = TRUE};
 #'   otherwise \code{NA}.
 #' }
+#'
+#' @references
+#' Sturman, E. D., Cribbie, R. A., & Flett, G. L. (2009). The average distance between
+#' item values: A novel approach for estimating internal consistency.
+#' \emph{Journal of Psychoeducational Assessment}, 27(5), 409-420.
+#' \doi{10.1177/0734282908330937}
 #'
 #' @examples
 #' \donttest{

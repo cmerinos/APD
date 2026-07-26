@@ -175,11 +175,11 @@
 #'
 #' @references
 #' Briggs, S.R. and Cheek, J.M. (1986). The role of factor analysis in the development and evaluation
-#' of personality scales. \emph{Journal of Personality, 54}, 106-148.
+#' of personality scales. \emph{Journal of Personality}, 54, 106-148.
 #' \doi{10.1111/j.1467-6494.1986.tb00391.x}
 #'
 #' Clark, L. A., & Watson, D. (1995). Constructing validity: Basic issues in objective scale development.
-#' \emph{Psychological Assessment, 7}(3), 309-319.
+#' \emph{Psychological Assessment}, 7(3), 309-319.
 #' \doi{10.1037/1040-3590.7.3.309}
 #'
 #' Piedmont, R.L. (2014). Inter-item correlations. In A.C. Michalos (Ed.),
@@ -190,7 +190,7 @@
 #' Hanss, D., Maran, D. A., Albzour, M., Aquino, S. D., Ayanian, A. H., Chegeni, R., Chukwuorji,
 #' J. B. C., Enea, V., Ghanbarian, E., Ghorayeb, J., Jiang, F., Kehinde, O. A., ... Yadav, R. (2022).
 #' Comparison of the inter-item correlations of the Big Five Inventory-10 (BFI-10) between Western and
-#' non-Western contexts. \emph{Personality and Individual Differences, 196}, 111751.
+#' non-Western contexts. \emph{Personality and Individual Differences} 196, 111751.
 #' \doi{10.1016/j.paid.2022.111751}
 #'
 #' @examples

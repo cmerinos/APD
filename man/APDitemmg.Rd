@@ -138,6 +138,6 @@ APDitemmg(
 \references{
 Sturman, D., Cribbie, R. A., & Flett, G. L. (2009).
 The average distance between item values: A novel approach for estimating
-internal consistency. \emph{Educational and Psychological Measurement},
-69(6), 913--932.
+internal consistency. \emph{Journal of Psychoeducational Assessment}, 27(5), 409-420.
+\doi{10.1177/0734282908330937}
 }
