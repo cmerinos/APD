@@ -9,7 +9,7 @@ Authors@R: c(
       role = c("aut", "cre")
     )
   )
-Description: Estimation of average proportional distance for repeatibility of responses in scales items, more other suplemental information.
+Description: Estimation of average proportional distance for repeatability of responses in scales items, more other supplemental information.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: TRUE

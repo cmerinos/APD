@@ -78,7 +78,8 @@
 #' @references
 #' Sturman, E. D., Cribbie, R. A., & Flett, G. L. (2009). The average distance between
 #' item values: A novel approach for estimating internal consistency.
-#' \emph{Journal of Psychoeducational Assessment}, 27(5), 409-420.\doi{10.1177/0734282908330937}
+#' \emph{Journal of Psychoeducational Assessment}, 27(5), 409-420.
+#' \doi{10.1177/0734282908330937}
 #'
 #' @examples
 #' \donttest{
@@ -101,7 +102,19 @@
 #'@importFrom utils combn
 #'
 #' @export
-APD <- function(data, ncat, ci, conf.level, B, cimethod, nd = 3) {
+APD <- function(data, ncat, ci = FALSE, conf.level = .95, B = 1000, cimethod = "perc", nd = 3) {
+  if (!is.data.frame(data) && !is.matrix(data))
+    stop("'data' must be a matrix or data.frame")
+
+  if (ncol(data) < 2)
+    stop("'data' must contain at least two items")
+
+  if (ncat < 2)
+    stop("'ncat' must be >= 2")
+
+  if (!cimethod %in% c("bca", "perc", "norm")) {
+    stop("'cimethod' must be one of 'bca', 'perc', or 'norm'")
+  }
 
   # Generate all possible combinations of item columns
   column_combinations <- combn(ncol(data), 2)
@@ -127,7 +140,7 @@ APD <- function(data, ncat, ci, conf.level, B, cimethod, nd = 3) {
   AD <- mean(all_diff_abs, na.rm = TRUE)
 
   # Compute the Average Proportional Distance
-  APD <- round(AD / (ncat - 1), nd)
+  apd <- round(AD / (ncat - 1), nd)
 
   # Initialize confidence interval limits
   LCI <- NA
@@ -222,7 +235,7 @@ APD <- function(data, ncat, ci, conf.level, B, cimethod, nd = 3) {
   resultados <- data.frame(
     Estimate = "APD",
     AD = round(AD, nd),
-    APD = APD,
+    APD = apd,
     lwr.ci = LCI,
     upr.ci = UCI
   )
