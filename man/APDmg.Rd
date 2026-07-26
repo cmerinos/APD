@@ -115,6 +115,7 @@ differences. That is, a given paired difference is omitted only when one or
 both item responses involved in that difference are missing.
 }
 \examples{
+\donttest{
 set.seed(123)
 
 # Simulated data: 30 respondents, 5 items, 2 groups
@@ -134,6 +135,7 @@ res <- APDmg(data = dat, ncat = 5, group = grp,
 
 res$APD.group
 res$comparisons
+}
 
 }
 \references{

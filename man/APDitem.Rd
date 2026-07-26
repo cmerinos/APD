@@ -49,9 +49,9 @@ calculates its average absolute discrepancy against all remaining items
 across respondents, and rescales it to the proportional metric.
 For a scale with p items and K response categories, the total APD is defined as
 the average absolute discrepancy across all within-person item pairs, divided
-by K−1. Extending this logic, the item-level APD for item j is the average absolute
+by K-1. Extending this logic, the item-level APD for item j is the average absolute
 discrepancy between that item and all remaining items across respondents, also
-divided by K−1. Under this definition, the total APD equals the mean of the
+divided by K-1. Under this definition, the total APD equals the mean of the
 item-level APD values.
 }
 \details{

@@ -25,13 +25,14 @@
 #' @references
 #' Cureton, E. E. (1971). A Measure of the Average Intercorrelation.
 #' Educational and Psychological Measurement, 31(3), 627-628.
-#' https://doi.org/10.1177/001316447103100303
+#' \doi{10.1177/001316447103100303}
 #'
 #' Kaiser, H. F. (1968). A Measure of the Average Intercorrelation.
 #' Educational and Psychological Measurement, 28(2), 245-247.
-#' https://doi.org/10.1177/001316446802800203
+#' \doi{10.1177/001316446802800203}
 #'
 #' @examples
+#' \donttest{
 #' # Example with continuous items (Pearson correlation)
 #' set.seed(123)
 #' x1 <- rnorm(200)
@@ -41,15 +42,18 @@
 #'
 #' aiicorEigen(dat, rmethod = "pearson")
 #' aiicorEigen(dat, rmethod = "spearman")
+#' }
 #'
+#' \donttest{
 #' # Example with ordinal items (polychoric correlation)
 #' # Uncomment if the 'psych' package is installed
-#' # dat_ord <- data.frame(
-#' #   item1 = cut(x1, breaks = 4, labels = FALSE),
-#' #   item2 = cut(x2, breaks = 4, labels = FALSE),
-#' #   item3 = cut(x3, breaks = 4, labels = FALSE)
-#' # )
-#' # aiicorEigen(dat_ord, rmethod = "poly")
+#' dat_ord <- data.frame(
+#'   item1 = cut(x1, breaks = 4, labels = FALSE),
+#'   item2 = cut(x2, breaks = 4, labels = FALSE),
+#'   item3 = cut(x3, breaks = 4, labels = FALSE))
+#'
+#' aiicorEigen(dat_ord, rmethod = "poly")
+#'}
 #'
 #' @export
 aiicorEigen <- function(data,

@@ -109,6 +109,7 @@
 #' \doi{10.1002/sim.3095}
 #'
 #' @examples
+#' \donttest{
 #' set.seed(123)
 #'
 #' # Simulated data: 30 respondents, 5 items, 2 groups
@@ -128,6 +129,7 @@
 #'
 #' res$APD.group
 #' res$comparisons
+#'}
 #'
 #'@importFrom utils combn
 #'

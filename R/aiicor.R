@@ -176,23 +176,25 @@
 #' @references
 #' Briggs, S.R. and Cheek, J.M. (1986). The role of factor analysis in the development and evaluation
 #' of personality scales. \emph{Journal of Personality, 54}, 106-148.
-#' https://doi.org/10.1111/j.1467-6494.1986.tb00391.x
+#' \doi{10.1111/j.1467-6494.1986.tb00391.x}
 #'
 #' Clark, L. A., & Watson, D. (1995). Constructing validity: Basic issues in objective scale development.
-#' \emph{Psychological Assessment, 7}(3), 309-319. https://doi.org/10.1037/1040-3590.7.3.309
+#' \emph{Psychological Assessment, 7}(3), 309-319.
+#' \doi{10.1037/1040-3590.7.3.309}
 #'
 #' Piedmont, R.L. (2014). Inter-item correlations. In A.C. Michalos (Ed.),
 #' \emph{Encyclopedia of Quality of Life and Well-Being Research}. Springer, Dordrecht.
-#' https://doi.org/10.1007/978-94-007-0753-5_1493
+#' \doi{10.1007/978-94-007-0753-5_1493}
 #'
 #' Park, J., van den Broek, K. L., Bhullar, N., Ogunbode, C. A., Schermer, J. A., Doran, R., Ardi, R.,
 #' Hanss, D., Maran, D. A., Albzour, M., Aquino, S. D., Ayanian, A. H., Chegeni, R., Chukwuorji,
 #' J. B. C., Enea, V., Ghanbarian, E., Ghorayeb, J., Jiang, F., Kehinde, O. A., ... Yadav, R. (2022).
 #' Comparison of the inter-item correlations of the Big Five Inventory-10 (BFI-10) between Western and
 #' non-Western contexts. \emph{Personality and Individual Differences, 196}, 111751.
-#' https://doi.org/10.1016/j.paid.2022.111751
+#' \doi{10.1016/j.paid.2022.111751}
 #'
 #' @examples
+#' \donttest{
 #' set.seed(123)
 #'
 #' data <- data.frame(
@@ -213,6 +215,7 @@
 #' res$group_results
 #' res$comparisons
 #' res$global_test
+#'}
 #'
 #' @export
 aiicor <- function(data,
