@@ -157,12 +157,8 @@ APDmg <- function(data, ncat, group, ci = TRUE, conf.level = 0.95,
     stop("Argument 'ncat' must be a single number greater than 1.")
   }
 
-  if (!cimethod %in% c("norm", "basic", "stud", "perc", "bca")) {
-    stop("Invalid 'cimethod'. Use one of: 'norm', 'basic', 'stud', 'perc', 'bca'.")
-  }
-
-  if (cimethod == "stud") {
-    stop("Method 'stud' is not implemented because it requires additional variance estimates.")
+  if (!cimethod %in% c("norm", "basic", "perc", "bca")) {
+    stop("Invalid 'cimethod'. Use one of: 'norm', 'basic', 'perc', 'bca'.")
   }
 
   # Internal function: computes AD and APD for one group
