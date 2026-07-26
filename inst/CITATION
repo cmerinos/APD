@@ -1,24 +1,21 @@
 citHeader("To cite APD, please use:")
 
-citEntry(
-  entry = "Article",
+citHeader("To cite APD, please use:")
+
+bibentry(
+  bibtype = "Article",
   title = "Response consistency for short scale items: R package for implementation of the average proportional distance",
-  author = personList(
+  author = c(
     person("César", "Merino Soto")
   ),
   year = "2026",
-  journal = "Ciencias Psicológicas",
-  textVersion = paste(
-    "Merino Soto, C. (2026).",
-    "Response consistency for short scale items: R package for implementation of the average proportional distance.",
-    "Ciencias Psicológicas."
-  )
+  journal = "Ciencias Psicológicas"
 )
 
-citEntry(
-  entry = "Manual",
+bibentry(
+  bibtype = "Manual",
   title = "APD: Average Proportional Distance for Item Analysis from Scales",
-  author = personList(
+  author = c(
     person("César", "Merino Soto")
   ),
   year = "2026",
