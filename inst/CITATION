@@ -8,9 +8,6 @@ citEntry(
   ),
   year = "2026",
   journal = "Ciencias Psicológicas",
-  volume = "incoming",
-  pages = "incoming",
-  doi = "incoming",
   textVersion = paste(
     "Merino Soto, C. (2026).",
     "Response consistency for short scale items: R package for implementation of the average proportional distance.",
