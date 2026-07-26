@@ -12,7 +12,6 @@ Authors@R: c(
 Description: Estimation of average proportional distance for repeatability of responses in scales items, more other supplemental information.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: TRUE
 Suggests: 
     spelling,
     testthat (>= 3.0.0)
