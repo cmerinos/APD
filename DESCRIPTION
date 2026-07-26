@@ -1,7 +1,7 @@
 Package: APD
 Type: Package
 Title: Average Proportional Distance
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: c(
     person(
       "Cesar", "Merino-Soto",
