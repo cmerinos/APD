@@ -146,7 +146,7 @@ personality scales.
 
 Clark, L. A., & Watson, D. (1995).  
 Constructing validity: Basic issues in objective scale development.  
-*Psychological Assessment*, 7}(3), 309–319.
+*Psychological Assessment*, 7(3), 309–319.
 <https://doi.org/10.1037/1040-3590.7.3.309>
 
 Piedmont, R.L. (2014). Inter-item correlations.  
