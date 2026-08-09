@@ -22,8 +22,8 @@ inter-item correlation average indices.
 You can install the development version from GitHub:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("cmerinos/APD")
+# From official CRAN:
+install.packages("APD")
 ```
 
 ## Example
@@ -120,9 +120,9 @@ iiacor(data = data.bfi[, 1:5],
 
 If you use this package, please cite:
 
-Merino Soto C (2026). APD: Average Proportional Distance for Item
-Analysis from Scales. R package version 0.3.0,
-<https://github.com/cmerinos/APD>.
+Merino-Soto, C. (2026). APD: Average Proportional Distance for Item
+Analysis from Scales. R package version 1.0.1,
+<https://CRAN.R-project.org/package=APD>.
 
 You can also obtain the citation in R:
 
